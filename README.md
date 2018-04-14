@@ -1,5 +1,5 @@
 # LTEB-Session
-实现一个LTE-B的Session发送器(client端)
+一、实现一个LTE-B的Session发送器(client端)
 1. 根据接口描述和协议类型(见下一节)发送 session start/stop请求给服务端
 
 2. 可支持同时(向同一个server)并发发送多个请求
@@ -21,3 +21,63 @@ c. 支持动态调整所有session时长
 d. 有异常处理
 
 e. 可优雅停止(比如等所有session stop后再退出)
+
+二、接口信息：
+
+1. Session 控制请求的操作类型和URL:
+
+POST http://<服务器地址加端口>/nbi/deliverysession?id=<DeliverySessionId>
+
+2. HTTP Body schema 定义:
+
+<?xml version="1.0" encoding="utf-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+<xsd:element name="DeliverySession" type="DeliverySessionCreationType"/>
+
+<xsd:complexType name="DeliverySessionCreationType">
+
+<xsd:sequence>
+
+<xsd:element name="DeliverySessionId" type="xsd:unsignedInt"/>
+
+<xsd:element name="Action" type="ActionType"/>
+
+<xsd:choice>
+
+<xsd:element name="TMGIPool" type=" xsd:string "/>
+
+<xsd:element name="TMGI" type=" xsd:string "/>
+
+</xsd:choice>
+
+<xsd:element name="StartTime" type="xsd:unsignedInt" minOccurs="0"/>
+
+<xsd:element name="StopTime" type="xsd:unsignedInt" minOccurs="0"/>
+
+</xsd:sequence>
+
+<xsd:attribute name="Version" type="xsd:string" use="required"/>
+
+</xsd:complexType>
+
+<xsd:simpleType name="ActionType">
+
+<xsd:restriction base="xsd:string">
+
+<xsd:enumeration value="Start"/>
+
+<xsd:enumeration value="Stop"/>
+
+</xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:schema>
+
+Note:
+
+请使用body 中的 ActionType 来表示是start还是stop
+
+body 中DeliverySessionId 和url中的id 参数值是一致的
